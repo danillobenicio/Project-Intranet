@@ -1,9 +1,15 @@
 <?php
+
+  require_once 'DAO/SessionDAO.php';
+
+  SessionDAO::VerificarLogado();
+
   require_once 'DAO/CadastrosDAO.php';
 
   $objDAO = new CadastrosDAO();
 
   $emails_ramais = $objDAO->ConsultarEmailsRamais();
+
 
 ?>
 <!DOCTYPE html>
@@ -26,6 +32,8 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1>E-mails / Ramais</h1>
+            <br>
+            <a href="novo_email_ramal.php" type="button" class="btn btn-primary">NOVO</a>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -54,6 +62,7 @@
                     <th>E-mail</th>
                     <th>Setor</th>
                     <th>Filial</th>
+                    <th style="width: 30px;">Ação</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -64,6 +73,7 @@
                     <td><?= $emails_ramais[$i]['email'] ?></td>
                     <td><?= $emails_ramais[$i]['setor'] ?></td>
                     <td><?= $emails_ramais[$i]['filial'] ?></td>
+                    <td style="width: 30px;"><a href="editar_email_ramal.php?id=<?=$emails_ramais[$i]['cod_ramal']?>" type="button" class="btn btn-primary btn-sm">EDITAR</a></td>
                   </tr>
                   <?php } ?>
                   </tbody>
@@ -74,6 +84,7 @@
                     <th>E-mail</th>
                     <th>Setor</th>
                     <th>Filial</th>
+                    <th style="width: 30px;">Ação</th>
                   </tr>
                   </tfoot>
                 </table>

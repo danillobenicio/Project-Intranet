@@ -65,7 +65,7 @@
                   <?php for($i = 0; $i < count($setores); $i++) { ?>  
                   <tr>
                     <td><?= $setores[$i]['descricao'] ?></td>
-                    <td style="width: 30px;"><a href="editar_setor.php?id=<?=$setores[$i]['cod_setor']?>" type="button" class="btn btn-primary">EDITAR</a></td>
+                    <td style="width: 30px;"><a href="editar_setor.php?id=<?=$setores[$i]['cod_setor']?>" type="button" class="btn btn-primary btn-sm">EDITAR</a></td>
                   </tr>
                   <?php } ?>
                   </tbody>

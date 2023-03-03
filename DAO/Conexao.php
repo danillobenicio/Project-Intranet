@@ -1,9 +1,9 @@
 <?php
 
 // Configurações do site
-define('HOST', ''); //IP
+define('HOST', '192.168.5.11'); //IP
 define('USER', 'app'); //usuario
-define('PASS', ''); //Senha
+define('PASS', '@ppV1nc45r4s'); //Senha
 define('DB', 'db_intranet'); //Banco de Dados
 
 /**
@@ -22,7 +22,6 @@ define('DB', 'db_intranet'); //Banco de Dados
 
             //Verifica se a conexão não existe
             if (self::$Connect == null):
-
                 $dsn = 'mysql:host=' . HOST . ';dbname=' . DB;
                 self::$Connect = new PDO($dsn, USER, PASS, null);
             endif;
