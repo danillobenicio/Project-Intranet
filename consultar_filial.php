@@ -1,5 +1,8 @@
 <?php
   require_once 'DAO/CadastrosDAO.php';
+  require_once 'DAO/SessionDAO.php';
+
+  SessionDAO::VerificarLogado();
 
   $objDAO = new CadastrosDAO();
 
@@ -26,6 +29,8 @@
         <div class="row mb-2">
           <div class="col-sm-6">
             <h1>Filiais</h1>
+            <br>
+            <a href="cadastrar_filial.php" type="button" class="btn btn-primary">NOVO</a>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">

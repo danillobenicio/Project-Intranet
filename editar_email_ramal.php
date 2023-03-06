@@ -12,15 +12,44 @@
 
     $telefone = $objDAO->ConsultarTelefone();
 
-   if(isset($_POST['btnSalvar'])){
+   if(isset($_GET['id']) && is_numeric($_GET['id']))
+   {
 
+    $emails_ramais = $objDAO->DetalharEmailRamal($_GET['id']);
+
+    if(count($emails_ramais) == 0) 
+    {
+      header('Location: consultar_email_ramal.php');
+    }
+
+   }
+   else if(isset($_POST['btnSalvar']))
+   {
+      $id = $_POST['id'];
       $nome = $_POST['nome'];
       $email = $_POST['email'];
       $ramal = $_POST['ramal'];
-      $sel_setor = $_POST['setor'];
-      $sel_telefone = $_POST['telefone'];
+      $setor = $_POST['setor'];
+      $telefone = $_POST['telefone'];
 
-      $ret = $objDAO->CadastrarEmailRamal($nome, $email, $sel_setor, $ramal, $sel_telefone);
+      $ret = $objDAO->AlterarEmailRamal($nome, $email, $ramal, $setor, $telefone, $id);
+
+      header('Location: editar_email_ramal.php?id=' . $id . '&ret=' . $ret);
+
+   }
+   else if(isset($_POST['btnExcluir']))
+   {
+
+      $id =  $_POST['id'];
+      $ret = $objDAO->ExcluirEmailRamal($id);
+
+      header('Location: consultar_email_ramal.php?ret=' . $ret);
+
+   }
+   else
+   {
+
+    header('Location: consultar_email_ramal.php');
 
    }
 
@@ -49,13 +78,13 @@
                     ExibirMsg($ret);
                 }
             ?>
-            <h1>Cadastrar E-mail / Ramal</h1>
+            <h1>Editar E-mail / Ramal</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Início</a></li>
               <li class="breadcrumb-item active">E-mail - Ramal</li>
-              <li class="breadcrumb-item active">Cadastrar</li>
+              <li class="breadcrumb-item active">Editar</li>
             </ol>
           </div>
         </div>
@@ -68,25 +97,26 @@
       <div class="card card-warning">
               <!-- /.card-header -->
               <div class="card-body">
-                <form method="post" action="novo_email_ramal.php">
+                <form method="post" action="editar_email_ramal.php">
+                  <input type="hidden" value="<?= $emails_ramais[0]['cod_ramal'] ?>" name="id" />
                   <div class="row">
                     <div class="col-sm-5">
                       <!-- text input -->
                       <div class="form-group">
                         <label>Nome</label>
-                        <input type="text" class="form-control" name="nome" >
+                        <input type="text" class="form-control" name="nome" value="<?= $emails_ramais[0]['pertence_pessoa'] ?>">
                       </div>
                     </div>
                     <div class="col-sm-5">
                       <div class="form-group">
                         <label>E-mail</label>
-                        <input type="email" class="form-control" name="email" >
+                        <input type="email" class="form-control" name="email" value="<?= $emails_ramais[0]['email'] ?>">
                       </div>
                     </div>
                     <div class="col-sm-2">
                       <div class="form-group">
                         <label>Ramal</label>
-                        <input type="number" class="form-control" name="ramal" maxlenght="4" >
+                        <input type="number" class="form-control" name="ramal" maxlenght="4" value="<?= $emails_ramais[0]['ramal'] ?>">
                       </div>
                     </div>
                   </div>
@@ -95,7 +125,7 @@
                       <div class="form-group">
                         <label>Setor</label>
                         <select class="form-control select2bs4" style="width: 100%;"  name="setor">
-                          <option value="" selected="selected">SELECIONE</option>
+                          <option value="<?= $emails_ramais[0]['cod_setor'] ?>" selected="selected"><?= $emails_ramais[0]['setor'] ?></option>
                           <?php for($i = 0; $i < count($setores); $i++) { ?>
                             <option value="<?= $setores[$i]['cod_setor'] ?>"><?=$setores[$i]['descricao']?></option>
                           <?php } ?>
@@ -106,7 +136,7 @@
                       <div class="form-group">
                         <label>Telefone</label>
                         <select class="form-control select2bs4" style="width: 100%;" name="telefone">
-                          <option value="" selected="selected">SELECIONE</option>
+                          <option value="<?= $emails_ramais[0]['cod_telefone'] ?>" selected="selected"><?= $emails_ramais[0]['descricao'] ?></option>
                           <?php for($i = 0; $i < count($telefone); $i++) { ?>
                               <option value="<?= $telefone[$i]['cod_telefone'] ?>"><?= $telefone[$i]['descricao'] ?></option>
                           <?php } ?>
@@ -116,6 +146,7 @@
                   </div>
                   <div class="card-footer">
                     <button type="submit" name="btnSalvar" class="btn btn-primary">SALVAR</button>
+                    <button type="submit" name="btnExcluir" class="btn btn-danger">EXCLUIR</button>
                     <a href="consultar_email_ramal.php" type="submit" class="btn btn-warning">VOLTAR</a>
                   </div>
                 </div>                  

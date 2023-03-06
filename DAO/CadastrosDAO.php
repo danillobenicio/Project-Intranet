@@ -7,7 +7,7 @@
     
 
         #SETORES
-        public function CadastrarSetor($nome_setor) {
+        public function CadastrarSetor($nome_setor){
 
             if (trim($nome_setor) == '') {
                 return 0;
@@ -41,7 +41,7 @@
 
 
 
-        public function ConsultarSetores() {
+        public function ConsultarSetores(){
 
             $conexao = parent::retornaConexao();
 
@@ -64,7 +64,7 @@
 
         }
 
-        public function DetalharSetor($id) {
+        public function DetalharSetor($id){
             
             $conexao = parent::retornaConexao();
 
@@ -90,7 +90,7 @@
             
         }
 
-        public function AlterarSetor($nome_setor, $id) {
+        public function AlterarSetor($nome_setor, $id){
 
             if (trim($nome_setor) == '') {
                 return 0;
@@ -138,7 +138,7 @@
 
         #E-mails Ramais
 
-        public function CadastrarEmailRamal($nome, $email, $sel_setor, $ramal, $sel_telefone) {
+        public function CadastrarEmailRamal($nome, $email, $sel_setor, $ramal, $sel_telefone){
 
             if (trim($nome) == '' || trim($email) == ''  || trim($sel_setor) == ''  || trim($ramal) == '' || trim($sel_telefone) == '') {
                 return 0;
@@ -174,7 +174,7 @@
             }
         }
 
-        public function ConsultarEmailsRamais() {
+        public function ConsultarEmailsRamais(){
 
             $conexao = parent::retornaConexao();
 
@@ -203,7 +203,7 @@
 
         }
 
-        public function DetalharEmailRamal($id) {
+        public function DetalharEmailRamal($id){
             
             $conexao = parent::retornaConexao();
 
@@ -213,7 +213,10 @@
                                 tip.ramal,
                                 tip.email, 
                                 tf.descricao as filial,
-                                ts.descricao as setor
+                                ts.descricao as setor,
+                                ts.cod_setor as cod_setor,
+                                tf.descricao as descricao,
+                                tt.cod_telefone as cod_telefone
                             FROM 
                                 tb_info_pessoa tip
                             INNER JOIN tipo_setor ts ON ts.cod_setor = tip.setor
@@ -236,26 +239,63 @@
             
         }
 
-        public function ConsultarFiliais() {
+        public function AlterarEmailRamal($nome, $email, $ramal, $setor, $telefone, $id){
+
+            if(trim($nome) == '' || trim($email) == '' || trim($ramal) == '' || trim($setor) == '' || trim($telefone) == ''){
+                return 0;
+            }
 
             $conexao = parent::retornaConexao();
 
-            $comando = 'SELECT 
-                            cod_filial,
-                            descricao,
-                            cod_filial_atak
-                        FROM 
-                            tb_filial';
-           
+            $comando = 'UPDATE 
+                            tb_info_pessoa
+                        SET 
+                            pertence_pessoa = ?,
+                            email = ?,
+                            ramal = ?,
+                            setor = ?,
+                            pertence_telefone = ?
+                        WHERE
+                            cod_ramal = ?';
+            
             $sql = new PDOStatement();
 
             $sql = $conexao->prepare($comando);
 
-            $sql->setFetchMode(PDO::FETCH_ASSOC);
-            
-            $sql->execute();
-            
-            return $sql->fetchAll();
+            $sql->bindValue(1, $nome);
+            $sql->bindValue(2, $email);
+            $sql->bindValue(3, $ramal);
+            $sql->bindValue(4, $setor);
+            $sql->bindValue(5, $telefone);
+            $sql->bindValue(6, $id);
+
+            try {
+                $sql->execute();
+                return 1;
+            } catch (Exception $ex) {
+                return -1;
+            }
+
+        }
+
+        public function ExcluirEmailRamal($id){
+
+            $conexao = parent::retornaConexao();
+
+            $comando = 'DELETE FROM tb_info_pessoa WHERE cod_ramal = ?';
+
+            $sql = new PDOStatement();
+
+            $sql = $conexao->prepare($comando);
+
+            $sql->bindValue(1, $id);
+
+            try {
+                $sql->execute();
+                return 1;
+            } catch (Exception $ex) {
+                return -1;
+            }
 
         }
 
@@ -281,6 +321,54 @@
             return $sql->fetchAll();
 
         }
+
+        #Filiais
+        public function ConsultarFiliais(){
+
+            $conexao = parent::retornaConexao();
+
+            $comando = 'SELECT 
+                            cod_filial,
+                            descricao,
+                            cod_filial_atak
+                        FROM 
+                            tb_filial';
+           
+            $sql = new PDOStatement();
+
+            $sql = $conexao->prepare($comando);
+
+            $sql->setFetchMode(PDO::FETCH_ASSOC);
+            
+            $sql->execute();
+            
+            return $sql->fetchAll();
+
+        }
+
+        public function CadastrarFilial($descricao, $cod_atak){
+            
+            $conexao = parent::retornaConexao();
+
+            $comando = 'INSERT INTO tb_filial (descricao, cod_filial_atak) VALUES (?, ?)';
+
+            $sql = new PDOStatement();
+
+            $sql = $conexao->prepare($comando);
+
+            $sql->bindValue(1, $descricao);
+            $sql->bindValue(2, $cod_atak);
+
+            try {
+                $sql->execute();
+                return 1;
+            } catch (Exception $ex) {
+                return -1;
+            }
+
+        }
+
+        
 
 
 
